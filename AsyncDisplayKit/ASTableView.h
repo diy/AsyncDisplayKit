@@ -93,14 +93,34 @@
  */
 - (void)reloadData;
 
-
 /**
- * We don't support the these methods for animation yet.
- *
- * TODO: support animations.
+ *  begins a batch of insert, delete reload and move operations. This method must be called from the main thread.
  */
 - (void)beginUpdates;
+
+/**
+ *  Concludes a series of method calls that insert, delete, select, or reload rows and sections of the table view, with animation enabled and no completion block.
+ *  You call this method to bracket a series of method calls that begins with beginUpdates and that consists of operations
+ *  to insert, delete, select, and reload rows and sections of the table view. When you call endUpdates, ASTableView begins animating
+ *  the operations simultaneously. This method is must be called from the main thread. It's important to remeber that the ASTableView will
+ *  be processing the updates asynchronously after this call is completed.
+ */
 - (void)endUpdates;
+
+/**
+ *  Concludes a series of method calls that insert, delete, select, or reload rows and sections of the table view.
+ *  You call this method to bracket a series of method calls that begins with beginUpdates and that consists of operations 
+ *  to insert, delete, select, and reload rows and sections of the table view. When you call endUpdates, ASTableView begins animating
+ *  the operations simultaneously. This method is must be called from the main thread. It's important to remeber that the ASTableView will
+ *  be processing the updates asynchronously after this call and are not guaranteed to be reflected in the ASTableView until
+ *  the completion block is executed.
+ *
+ *  @param animated   NO to disable all animations.
+ *  @param completion A completion handler block to execute when all of the operations are finished. This block takes a single
+ *                    Boolean parameter that contains the value YES if all of the related animations completed successfully or
+ *                    NO if they were interrupted. This parameter may be nil. If supplied, the block is run on the main thread.
+ */
+- (void)endUpdatesAnimated:(BOOL)animated completion:(void (^)(BOOL completed))completion;
 
 /**
  * Inserts one or more sections, with an option to animate the insertion.
@@ -109,8 +129,7 @@
  * 
  * @param animation A constant that indicates how the insertion is to be animated. See UITableViewRowAnimation.
  *
- * @discussion This operation is asynchronous and thread safe. You can call it from background thread (it is recommendated)
- * and the UI table view will be updated asynchronously. The asyncDataSource must be updated to reflect the changes
+ * @discussion This method must be called from the main thread. The asyncDataSource must be updated to reflect the changes
  * before this method is called.
  */
 - (void)insertSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation;
@@ -122,8 +141,7 @@
  *
  * @param animation A constant that indicates how the deletion is to be animated. See UITableViewRowAnimation.
  *
- * @discussion This operation is asynchronous and thread safe. You can call it from background thread (it is recommendated)
- * and the UI table view will be updated asynchronously. The asyncDataSource must be updated to reflect the changes
+ * @discussion This method must be called from the main thread. The asyncDataSource must be updated to reflect the changes
  * before this method is called.
  */
 - (void)deleteSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation;
@@ -135,8 +153,7 @@
  *
  * @param animation A constant that indicates how the reloading is to be animated. See UITableViewRowAnimation.
  *
- * @discussion This operation is asynchronous and thread safe. You can call it from background thread (it is recommendated)
- * and the UI table view will be updated asynchronously. The asyncDataSource must be updated to reflect the changes
+ * @discussion This method must be called from the main thread. The asyncDataSource must be updated to reflect the changes
  * before this method is called.
  */
 - (void)reloadSections:(NSIndexSet *)sections withRowAnimation:(UITableViewRowAnimation)animation;
@@ -148,8 +165,7 @@
  *
  * @param newSection The index that is the destination of the move for the section.
  *
- * @discussion This operation is asynchronous and thread safe. You can call it from background thread (it is recommendated)
- * and the UI table view will be updated asynchronously. The asyncDataSource must be updated to reflect the changes
+ * @discussion This method must be called from the main thread. The asyncDataSource must be updated to reflect the changes
  * before this method is called.
  */
 - (void)moveSection:(NSInteger)section toSection:(NSInteger)newSection;
@@ -161,8 +177,7 @@
  *
  * @param animation A constant that indicates how the insertion is to be animated. See UITableViewRowAnimation.
  *
- * @discussion This operation is asynchronous and thread safe. You can call it from background thread (it is recommendated)
- * and the UI table view will be updated asynchronously. The asyncDataSource must be updated to reflect the changes
+ * @discussion This method must be called from the main thread. The asyncDataSource must be updated to reflect the changes
  * before this method is called.
  */
 - (void)insertRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation;
@@ -174,8 +189,7 @@
  *
  * @param animation A constant that indicates how the deletion is to be animated. See UITableViewRowAnimation.
  *
- * @discussion This operation is asynchronous and thread safe. You can call it from background thread (it is recommendated)
- * and the UI table view will be updated asynchronously. The asyncDataSource must be updated to reflect the changes
+ * @discussion This method must be called from the main thread. The asyncDataSource must be updated to reflect the changes
  * before this method is called.
  */
 - (void)deleteRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation;
@@ -187,8 +201,7 @@
  *
  * @param animation A constant that indicates how the reloading is to be animated. See UITableViewRowAnimation.
  *
- * @discussion This operation is asynchronous and thread safe. You can call it from background thread (it is recommendated)
- * and the UI table view will be updated asynchronously. The asyncDataSource must be updated to reflect the changes
+ * @discussion This method must be called from the main thread. The asyncDataSource must be updated to reflect the changes
  * before this method is called.
  */
 - (void)reloadRowsAtIndexPaths:(NSArray *)indexPaths withRowAnimation:(UITableViewRowAnimation)animation;
@@ -200,8 +213,7 @@
  *
  * @param newIndexPath The index path that is the destination of the move for the row.
  *
- * @discussion This operation is asynchronous and thread safe. You can call it from background thread (it is recommendated)
- * and the UI table view will be updated asynchronously. The asyncDataSource must be updated to reflect the changes
+ * @discussion This method must be called from the main thread. The asyncDataSource must be updated to reflect the changes
  * before this method is called.
  */
 - (void)moveRowAtIndexPath:(NSIndexPath *)indexPath toIndexPath:(NSIndexPath *)newIndexPath;
@@ -221,6 +233,15 @@
  * @returns an array containing the nodes being displayed on screen.
  */
 - (NSArray *)visibleNodes;
+
+/**
+ * YES to automatically adjust the contentOffset when cells are inserted or deleted "before"
+ * visible cells, maintaining the users' visible scroll position. Currently this feature tracks insertions, moves and deletions of
+ * cells, but section edits are ignored.
+ *
+ * default is NO.
+ */
+@property (nonatomic) BOOL automaticallyAdjustsContentOffset;
 
 @end
 

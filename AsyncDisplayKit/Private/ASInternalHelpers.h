@@ -9,11 +9,13 @@
  */
 
 #include <CoreGraphics/CGBase.h>
+#import <Foundation/Foundation.h>
 #import "ASBaseDefines.h"
 
 ASDISPLAYNODE_EXTERN_C_BEGIN
 
 BOOL ASSubclassOverridesSelector(Class superclass, Class subclass, SEL selector);
+BOOL ASSubclassOverridesClassSelector(Class superclass, Class subclass, SEL selector);
 
 CGFloat ASScreenScale();
 

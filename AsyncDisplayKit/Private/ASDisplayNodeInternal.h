@@ -17,9 +17,11 @@
 #import "ASDisplayNode.h"
 #import "ASSentinel.h"
 #import "ASThread.h"
+#import "ASLayoutOptions.h"
 
 BOOL ASDisplayNodeSubclassOverridesSelector(Class subclass, SEL selector);
 void ASDisplayNodePerformBlockOnMainThread(void (^block)());
+void ASDisplayNodeRespectThreadAffinityOfNode(ASDisplayNode *node, void (^block)());
 
 typedef NS_OPTIONS(NSUInteger, ASDisplayNodeMethodOverrides) {
   ASDisplayNodeMethodOverrideNone = 0,
@@ -27,7 +29,7 @@ typedef NS_OPTIONS(NSUInteger, ASDisplayNodeMethodOverrides) {
   ASDisplayNodeMethodOverrideTouchesCancelled      = 1 << 1,
   ASDisplayNodeMethodOverrideTouchesEnded          = 1 << 2,
   ASDisplayNodeMethodOverrideTouchesMoved          = 1 << 3,
-  ASDisplayNodeMethodOverrideCalculateSizeThatFits = 1 << 4
+  ASDisplayNodeMethodOverrideLayoutSpecThatFits    = 1 << 4
 };
 
 @class _ASPendingState;
@@ -58,6 +60,7 @@ typedef NS_OPTIONS(NSUInteger, ASDisplayNodeMethodOverrides) {
 
   ASDisplayNodeViewBlock _viewBlock;
   ASDisplayNodeLayerBlock _layerBlock;
+  ASDisplayNodeDidLoadBlock _nodeLoadedBlock;
   Class _viewClass;
   Class _layerClass;
   UIView *_view;
@@ -71,7 +74,7 @@ typedef NS_OPTIONS(NSUInteger, ASDisplayNodeMethodOverrides) {
 
   _ASPendingState *_pendingViewState;
 
-  struct {
+  struct ASDisplayNodeFlags {
     // public properties
     unsigned synchronous:1;
     unsigned layerBacked:1;
@@ -121,6 +124,7 @@ typedef NS_OPTIONS(NSUInteger, ASDisplayNodeMethodOverrides) {
 // Core implementation of -measureWithSizeRange:. Must be called with _propertyLock held.
 - (ASLayout *)__measureWithSizeRange:(ASSizeRange)constrainedSize;
 
+- (void)__setNeedsLayout;
 - (void)__layout;
 - (void)__setSupernode:(ASDisplayNode *)supernode;
 

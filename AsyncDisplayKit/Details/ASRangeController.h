@@ -85,10 +85,10 @@
  * End updates.
  *
  * @param rangeController Sender.
- *
+ * @param animated NO if all animations are disabled. YES otherwise.
  * @param completion Completion block.
  */
-- (void)rangeControllerEndUpdates:(ASRangeController * )rangeController completion:(void (^)(BOOL))completion ;
+- (void)rangeController:(ASRangeController * )rangeController endUpdatesAnimated:(BOOL)animated completion:(void (^)(BOOL))completion;
 
 /**
  * Fetch nodes at specific index paths.
@@ -104,22 +104,26 @@
  *
  * @param rangeController Sender.
  *
+ * @param nodes Inserted nodes.
+ *
  * @param indexPaths Index path of inserted nodes.
  *
  * @param animationOptions Animation options. See ASDataControllerAnimationOptions.
  */
-- (void)rangeController:(ASRangeController *)rangeController didInsertNodesAtIndexPaths:(NSArray *)indexPaths withAnimationOptions:(ASDataControllerAnimationOptions)animationOptions;
+- (void)rangeController:(ASRangeController *)rangeController didInsertNodes:(NSArray *)nodes atIndexPaths:(NSArray *)indexPaths withAnimationOptions:(ASDataControllerAnimationOptions)animationOptions;
 
 /**
  * Called for nodes deletion.
  *
  * @param rangeController Sender.
  *
+ * @param nodes Deleted nodes.
+ *
  * @param indexPaths Index path of deleted nodes.
  *
  * @param animationOptions Animation options. See ASDataControllerAnimationOptions.
  */
-- (void)rangeController:(ASRangeController *)rangeController didDeleteNodesAtIndexPaths:(NSArray *)indexPaths withAnimationOptions:(ASDataControllerAnimationOptions)animationOptions;
+- (void)rangeController:(ASRangeController *)rangeController didDeleteNodes:(NSArray *)nodes atIndexPaths:(NSArray *)indexPaths withAnimationOptions:(ASDataControllerAnimationOptions)animationOptions;
 
 /**
  * Called for section insertion.
